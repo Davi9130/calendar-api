@@ -4,7 +4,7 @@ const GMAIL_ID = process.env.GMAIL_ID;
 const CALENDAR_AUTH_URL = process.env.CALENDAR_AUTH_URL;
 const PRIVATE_KEY = process.env.CALENDAR_PRIVATE_KEY.replace(/\\n/g, '\n');
 
-export async function createGoogleCalendar(uuid) {
+export async function createGoogleCalendar(uuid: string) {
   try {
     const jwtClient = new google.auth.JWT(GMAIL_ID, null, PRIVATE_KEY, [
       CALENDAR_AUTH_URL,
@@ -20,7 +20,7 @@ export async function createGoogleCalendar(uuid) {
     };
 
     const response = await calendar.calendars.insert({
-      resource: newCalendar,
+      requestBody: newCalendar,
     });
 
     return { calendarId: response.data.id };
@@ -48,7 +48,7 @@ export async function listCalendars() {
   }
 }
 
-export async function listCalendarEvents(calendarId) {
+export async function listCalendarEvents(calendarId: string) {
   try {
     const jwtClient = new google.auth.JWT(GMAIL_ID, null, PRIVATE_KEY, [
       CALENDAR_AUTH_URL,
@@ -74,7 +74,15 @@ export async function listCalendarEvents(calendarId) {
   }
 }
 
-export async function createEventInCalendar(calendarId, event) {
+export async function createEventInCalendar(
+  calendarId: string,
+  event: {
+    summary: string;
+    description: string;
+    start: string;
+    end: string;
+  }
+) {
   try {
     const jwtClient = new google.auth.JWT(GMAIL_ID, null, PRIVATE_KEY, [
       CALENDAR_AUTH_URL,
@@ -86,7 +94,7 @@ export async function createEventInCalendar(calendarId, event) {
 
     const response = await calendar.events.insert({
       calendarId,
-      resource: {
+      requestBody: {
         summary: event.summary,
         description: event.description,
         start: {

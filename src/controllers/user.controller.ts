@@ -36,7 +36,7 @@ export const create = async (req, res) => {
       message: 'User created successfully, check your email to validate',
       user,
     });
-  } catch (e) {
+  } catch (e: any) {
     res.status(400).send({ error: e.message });
   }
 };
@@ -52,7 +52,7 @@ export const me = async (req, res) => {
     if (!user) throw new Error('User not found');
 
     res.status(200).send(user);
-  } catch (e) {
+  } catch (e: any) {
     res.status(400).send({ error: e.message });
   }
 };
@@ -72,16 +72,12 @@ export const login = async (req, res) => {
       expiresIn: '999 days',
     });
 
-    delete user.password;
+    if (user.password) delete user.password;
 
-    const resp = await createGoogleCalendar(
-      '632689bc-85a4-4033-9edb-9eba5d9da4bf'
-    );
-
-    console.log(resp);
+    await createGoogleCalendar('632689bc-85a4-4033-9edb-9eba5d9da4bf');
 
     res.status(200).send({ user, token });
-  } catch (e) {
+  } catch (e: any) {
     res.status(400).send({ error: e.message });
   }
 };
@@ -99,7 +95,7 @@ export const activeUserEmail = async (req, res) => {
     await activeEmail(user.id);
 
     res.status(200).send({ message: 'Email validated successfully' });
-  } catch (e) {
+  } catch (e: any) {
     res.status(400).send({ error: e.message });
   }
 };
