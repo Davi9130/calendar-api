@@ -6,3 +6,9 @@ export const createCalendarSchema = yup.object().shape({
   start: yup.string().required(),
   end: yup.string().required(),
 });
+
+export const deleteCalendarSchema = yup.object().shape({
+  sendUpdates: yup.string().oneOf(['all', 'externalonly', 'none']).required(),
+  notifyAttendees: yup.boolean().required(),
+  eventId: yup.string().required(),
+});

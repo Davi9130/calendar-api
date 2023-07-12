@@ -113,3 +113,51 @@ export async function createEventInCalendar(
     console.error('Error on create a new calendar event', error);
   }
 }
+
+export const deleteEventInCalendar = async (
+  calendarId: string,
+  sendUpdates: string,
+  notifyAttendees: boolean,
+  eventId: string
+) => {
+  try {
+    const jwtClient = new google.auth.JWT(GMAIL_ID, null, PRIVATE_KEY, [
+      CALENDAR_AUTH_URL,
+    ]);
+
+    await jwtClient.authorize();
+
+    const calendar = google.calendar({ version: 'v3', auth: jwtClient });
+
+    const response = await calendar.events.delete({
+      calendarId,
+      sendUpdates,
+      sendNotifications: notifyAttendees,
+      eventId: eventId,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error on delete a calendar event', error);
+  }
+};
+
+export const deleteCalendar = async (calendarId: string) => {
+  try {
+    const jwtClient = new google.auth.JWT(GMAIL_ID, null, PRIVATE_KEY, [
+      CALENDAR_AUTH_URL,
+    ]);
+
+    await jwtClient.authorize();
+
+    const calendar = google.calendar({ version: 'v3', auth: jwtClient });
+
+    const response = await calendar.calendars.delete({
+      calendarId,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error on delete a calendar', error);
+  }
+};
