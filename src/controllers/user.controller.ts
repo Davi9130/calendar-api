@@ -8,7 +8,7 @@ import { loginSchema, registerSchema } from '../validations/user.validation';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import mail from '../shared/helpers/nodemailer';
-import { createGoogleCalendar } from '../utils/googleCalendar';
+import { User } from '@prisma/client';
 
 export const create = async (req, res) => {
   try {
@@ -45,7 +45,9 @@ export const me = async (req, res) => {
   try {
     const token = req.headers.authorization.split(' ')[1];
 
-    const decode = jwt.verify(token, process.env.JWT_SECRET);
+    const decode = jwt.verify(token, process.env.JWT_SECRET) as {
+      id: User['id'];
+    };
 
     const user = await whoIam(decode.id);
 
@@ -74,8 +76,6 @@ export const login = async (req, res) => {
 
     if (user.password) delete user.password;
 
-    await createGoogleCalendar('632689bc-85a4-4033-9edb-9eba5d9da4bf');
-
     res.status(200).send({ user, token });
   } catch (e: any) {
     res.status(400).send({ error: e.message });
@@ -86,7 +86,9 @@ export const activeUserEmail = async (req, res) => {
   try {
     const token = req.params.token;
 
-    const decode = jwt.verify(token, process.env.EMAIL_VALIDATION_SECRET);
+    const decode = jwt.verify(token, process.env.EMAIL_VALIDATION_SECRET) as {
+      id: User['id'];
+    };
 
     const user = await whoIam(decode.id);
 
@@ -99,5 +101,3 @@ export const activeUserEmail = async (req, res) => {
     res.status(400).send({ error: e.message });
   }
 };
-
-export const createNewCalendar = async (req, res) => {};

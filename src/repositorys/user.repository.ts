@@ -68,3 +68,24 @@ export const activeEmail = async (id) => {
 
   return user;
 };
+
+export const updateUser = async (id, data) => {
+  const user = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      createdAt: true,
+      updatedAt: true,
+      email_verified: true,
+      phone: true,
+      calendar_id: true,
+    },
+  });
+
+  return user;
+};
